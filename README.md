@@ -1,4 +1,4 @@
-# MISW4201-202214-Backend-Grupo00
+# MISW4201-202214-Backend-Grupo12
 
 Para iniciar el servidor, ejecutar: 
 
