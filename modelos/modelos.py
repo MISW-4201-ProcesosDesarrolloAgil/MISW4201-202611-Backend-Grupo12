@@ -121,6 +121,15 @@ class Zona(db.Model):
     id_propiedad = db.Column(db.Integer, db.ForeignKey('propiedad.id'))
     propiedad = db.relationship('Propiedad', cascade='all, delete, delete-orphan')
 
+class ElementoInventario(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nombre_elemento = db.Column(db.String(128), nullable=False)
+    descripcion = db.Column(db.String(256), nullable=True)
+    cantidad = db.Column(db.Integer, nullable=False, default=0)
+    fecha_registro = db.Column(db.DateTime, nullable=True)
+    id_zona = db.Column(db.Integer, db.ForeignKey('zona.id'))
+    zona = db.relationship('Zona', cascade='all, delete, delete-orphan')
+
 class ReservaSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Reserva
@@ -161,4 +170,10 @@ class ZonaSchema(SQLAlchemyAutoSchema):
         include_relationships = True
         load_instance = True
         include_fk = True
-        
+
+class ElementoInventarioSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = ElementoInventario
+        include_relationships = True
+        load_instance = True
+        include_fk = True
