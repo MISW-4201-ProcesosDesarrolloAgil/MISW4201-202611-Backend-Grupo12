@@ -55,6 +55,12 @@ class Banco(enum.Enum):
     RAPPIPAY                        = 'RAPPIPAY'
     NEQUI                           = 'NEQUI'
 
+#enumerar zonas posibles
+
+class ZonaPosible(enum.Enum):
+    COCINA = 'COCINA'
+    SALA = 'SALA'
+    #más
 
 class Propiedad(db.Model):
     __table_args__ = (UniqueConstraint('direccion', 'ciudad', 'municipio', name='unique_address'),)
@@ -108,6 +114,22 @@ class Usuario(db.Model):
     propiedades = db.relationship('Propiedad', cascade='all, delete, delete-orphan')
 
 
+class Zona(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nombre_zona = db.Column(db.Enum(ZonaPosible), nullable=False)
+    descripcion = db.Column(db.String(256), nullable=True)
+    id_propiedad = db.Column(db.Integer, db.ForeignKey('propiedad.id'))
+    propiedad = db.relationship('Propiedad', cascade='all, delete, delete-orphan')
+
+class ElementoInventario(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nombre_elemento = db.Column(db.String(128), nullable=False)
+    descripcion = db.Column(db.String(256), nullable=True)
+    cantidad = db.Column(db.Integer, nullable=False, default=0)
+    fecha_registro = db.Column(db.DateTime, nullable=True)
+    id_zona = db.Column(db.Integer, db.ForeignKey('zona.id'))
+    zona = db.relationship('Zona', cascade='all, delete, delete-orphan')
+
 class ReservaSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Reserva
@@ -141,3 +163,17 @@ class UsuarioSchema(SQLAlchemyAutoSchema):
         include_relationships = True
         load_instance = True
         exclude = ('contrasena',)
+
+class ZonaSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Zona
+        include_relationships = True
+        load_instance = True
+        include_fk = True
+
+class ElementoInventarioSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = ElementoInventario
+        include_relationships = True
+        load_instance = True
+        include_fk = True
