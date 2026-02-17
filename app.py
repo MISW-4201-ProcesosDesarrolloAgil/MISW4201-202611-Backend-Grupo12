@@ -14,7 +14,7 @@ from vistas.sign_in import VistaSignIn
 from vistas.login import VistaLogIn
 from modelos import db, Usuario
 from vistas.tipo_movimientos import VistaTipoMovimientos
-
+from vistas.zonasPropiedad import VistaZonasPropiedad
 
 app = None
 
@@ -59,6 +59,7 @@ def add_urls(app):
     api.add_resource(VistaMovimiento, "/movimientos/<int:id_movimiento>")
     api.add_resource(VistaBancos, "/bancos")
     api.add_resource(VistaTipoMovimientos, "/tipo-movimientos")
+    api.add_resource(VistaZonasPropiedad, "/propiedades/<int:id_propiedad>/zonas")
 
 
 app = create_flask_app()
