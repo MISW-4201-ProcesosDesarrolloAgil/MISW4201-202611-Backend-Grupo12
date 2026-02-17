@@ -76,6 +76,7 @@ class Propiedad(db.Model):
     numero_cuenta = db.Column(db.String(32), nullable=True)
     movimientos = db.relationship('Movimiento', cascade='all, delete, delete-orphan')
     reservas = db.relationship('Reserva', cascade='all, delete, delete-orphan')
+    zonas = db.relationship('Zona', back_populates='propiedad', cascade='all, delete, delete-orphan')
     id_usuario = db.Column(db.Integer, db.ForeignKey("usuario.id"), nullable=False)
 
 
@@ -119,7 +120,8 @@ class Zona(db.Model):
     nombre_zona = db.Column(db.Enum(ZonaPosible), nullable=False)
     descripcion = db.Column(db.String(256), nullable=True)
     id_propiedad = db.Column(db.Integer, db.ForeignKey('propiedad.id'))
-    propiedad = db.relationship('Propiedad', cascade='all, delete, delete-orphan')
+    propiedad = db.relationship('Propiedad', back_populates='zonas')
+    elementos = db.relationship('ElementoInventario', back_populates='zona', cascade='all, delete, delete-orphan')
 
 class ElementoInventario(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -128,7 +130,7 @@ class ElementoInventario(db.Model):
     cantidad = db.Column(db.Integer, nullable=False, default=0)
     fecha_registro = db.Column(db.DateTime, nullable=True)
     id_zona = db.Column(db.Integer, db.ForeignKey('zona.id'))
-    zona = db.relationship('Zona', cascade='all, delete, delete-orphan')
+    zona = db.relationship('Zona', back_populates='elementos')
 
 class ReservaSchema(SQLAlchemyAutoSchema):
     class Meta:
