@@ -69,6 +69,17 @@ class TestCrearZonaPropiedad:
     def test_crear_zona_retorna_info_zona_creada(self, client):
         token_usuario_1 = create_access_token(identity=str(self.usuario_1.id))
         self.actuar(client, self.propiedad_1_usu_1.id, self.datos_zona, token_usuario_1)
-        print(self.respuesta_json)
         assert self.respuesta_json['nombre_zona'] == ZonaPosible.COCINA.value
         assert self.respuesta_json['descripcion'] == 'Cocina integral con estufa de gas'
+
+    def test_crear_zona_propiedad_del_usuario_crea_registro_db(self, client):
+        token_usuario_1 = create_access_token(identity=str(self.usuario_1.id))
+        self.actuar(client, self.propiedad_1_usu_1.id, self.datos_zona, token_usuario_1)
+        zona_db = Zona.query.filter(Zona.id_propiedad == self.propiedad_1_usu_1.id).all()
+        assert len(zona_db) == 1
+
+    def test_crear_zona_en_propiedad_de_otro_usuario_retorna_404(self, client):
+        token_usuario_1 = create_access_token(identity=str(self.usuario_1.id))
+        self.actuar(client, self.propiedad_1_usu_2.id, self.datos_zona, token_usuario_1)
+        assert self.respuesta.status_code == 404
+        assert self.respuesta_json['mensaje'] == 'Propiedad no encontrada'
