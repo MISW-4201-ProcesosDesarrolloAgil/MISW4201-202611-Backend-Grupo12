@@ -12,12 +12,9 @@ class VistaZonasPropiedad(Resource):
 
     @jwt_required()
     def post(self, id_propiedad):
-        zona = Zona(
-            nombre_zona=request.json.get("nombre_zona"),
-            descripcion=request.json.get("descripcion"),
-            id_propiedad=id_propiedad
-        )
+        zona = zona_schema.load(request.json, session=db.session)
+        zona.id_propiedad = id_propiedad
         db.session.add(zona)
         db.session.commit()
 
-        return {}, 201
+        return zona_schema.dump(zona), 201
