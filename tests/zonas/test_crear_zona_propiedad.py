@@ -65,3 +65,10 @@ class TestCrearZonaPropiedad:
         token_usuario_1 = create_access_token(identity=self.usuario_1.id)
         self.actuar(client, self.propiedad_1_usu_1.id, self.datos_zona, token_usuario_1)
         self.respuesta.status_code == 201
+
+    def test_crear_zona_retorna_info_zona_creada(self, client):
+        token_usuario_1 = create_access_token(identity=str(self.usuario_1.id))
+        self.actuar(client, self.propiedad_1_usu_1.id, self.datos_zona, token_usuario_1)
+        print(self.respuesta_json)
+        assert self.respuesta_json['nombre_zona'] == ZonaPosible.COCINA.value
+        assert self.respuesta_json['descripcion'] == 'Cocina integral con estufa de gas'
