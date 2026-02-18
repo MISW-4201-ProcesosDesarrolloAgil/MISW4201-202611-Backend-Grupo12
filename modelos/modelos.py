@@ -167,6 +167,7 @@ class UsuarioSchema(SQLAlchemyAutoSchema):
         exclude = ('contrasena',)
 
 class ZonaSchema(SQLAlchemyAutoSchema):
+    nombre_zona = fields.Enum(ZonaPosible, by_value=True)
     class Meta:
         model = Zona
         include_relationships = True
