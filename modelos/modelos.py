@@ -58,9 +58,24 @@ class Banco(enum.Enum):
 #enumerar zonas posibles
 
 class ZonaPosible(enum.Enum):
-    COCINA = 'COCINA'
-    SALA = 'SALA'
-    #más
+    ENTRADA_PRINCIPAL = "ENTRADA_PRINCIPAL"
+    SALA = "SALA"
+    COMEDOR = "COMEDOR"
+    COCINA = "COCINA"
+    HABITACION_PRINCIPAL = "HABITACION_PRINCIPAL"
+    HABITACION_SECUNDARIA = "HABITACION_SECUNDARIA"
+    BANO_PRINCIPAL = "BANO_PRINCIPAL"
+    BANO_SECUNDARIO = "BANO_SECUNDARIO"
+    BALCON = "BALCON"
+    TERRAZA = "TERRAZA"
+    PATIO = "PATIO"
+    JARDIN = "JARDIN"
+    LAVANDERIA = "LAVANDERIA"
+    ESTUDIO = "ESTUDIO"
+    PARQUEADERO = "PARQUEADERO"
+    BODEGA = "BODEGA"
+    PASILLO = "PASILLO"
+    ESCALERAS = "ESCALERAS"
 
 class Propiedad(db.Model):
     __table_args__ = (UniqueConstraint('direccion', 'ciudad', 'municipio', name='unique_address'),)
