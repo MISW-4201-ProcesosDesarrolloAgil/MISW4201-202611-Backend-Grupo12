@@ -15,9 +15,14 @@ class VistaZonasPropiedad(Resource):
         resultado_buscar_propiedad = buscar_propiedad(id_propiedad, current_user.id)
         if resultado_buscar_propiedad.error:
             return resultado_buscar_propiedad.error
-        zona = zona_schema.load(request.json, session=db.session)
-        zona.id_propiedad = id_propiedad
-        db.session.add(zona)
-        db.session.commit()
-
+        try:
+            zona = zona_schema.load(request.json, session=db.session)
+            zona.id_propiedad = id_propiedad
+            db.session.add(zona)
+            db.session.commit()
+        except ValidationError as validation_error:
+            return validation_error.messages, 400
+        except exc.IntegrityError:
+            db.session.rollback()
+            return {'mensaje': 'Hubo un error creando la zona. Revise los datos proporcionados'}, 400
         return zona_schema.dump(zona), 201
