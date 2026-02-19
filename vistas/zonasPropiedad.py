@@ -12,6 +12,9 @@ class VistaZonasPropiedad(Resource):
 
     @jwt_required()
     def post(self, id_propiedad):
+        resultado_buscar_propiedad = buscar_propiedad(id_propiedad, current_user.id)
+        if resultado_buscar_propiedad.error:
+            return resultado_buscar_propiedad.error
         zona = zona_schema.load(request.json, session=db.session)
         zona.id_propiedad = id_propiedad
         db.session.add(zona)
