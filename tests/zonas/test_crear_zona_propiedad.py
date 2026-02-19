@@ -82,4 +82,15 @@ class TestCrearZonaPropiedad:
         token_usuario_1 = create_access_token(identity=str(self.usuario_1.id))
         self.actuar(client, self.propiedad_1_usu_2.id, self.datos_zona, token_usuario_1)
         assert self.respuesta.status_code == 404
-        assert self.respuesta_json['mensaje'] == 'Propiedad no encontrada'
+        assert self.respuesta_json['mensaje'] == 'propiedad no encontrada'
+
+    def test_zona_se_crea_en_propiedad_enviada_en_url_no_en_propiedad_en_payload(self, client):
+        token_usuario_2 = create_access_token(identity=str(self.usuario_2.id))
+        self.datos_zona.update({'id_propiedad': self.propiedad_1_usu_1.id})
+        self.actuar(client, self.propiedad_1_usu_2.id, self.datos_zona, token_usuario_2)
+        assert Zona.query.filter(Zona.id_propiedad == self.propiedad_1_usu_2.id).one_or_none()
+
+
+    def test_crear_zona_retorna_401_token_no_enviado(self, client):
+        self.actuar(client, self.propiedad_1_usu_1.id, self.datos_zona)
+        assert self.respuesta.status_code == 401
