@@ -26,3 +26,11 @@ class VistaZonasPropiedad(Resource):
             db.session.rollback()
             return {'mensaje': 'Hubo un error creando la zona. Revise los datos proporcionados'}, 400
         return zona_schema.dump(zona), 201
+    
+    @jwt_required()
+    def get(self, id_propiedad):
+        resultado_buscar_propiedad = buscar_propiedad(id_propiedad, current_user.id)
+        if resultado_buscar_propiedad.error:
+            return resultado_buscar_propiedad.error
+        zonas = Zona.query.filter_by(id_propiedad=id_propiedad).all()
+        return zona_schema.dump(zonas, many=True), 200

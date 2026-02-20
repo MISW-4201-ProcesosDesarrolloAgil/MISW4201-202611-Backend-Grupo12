@@ -4,6 +4,7 @@ from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from sqlalchemy import select
 from vistas.bancos import VistaBancos
+from vistas.zonasPosibles import VistaZonasPosibles
 from vistas.movimiento import VistaMovimiento
 from vistas.movimientos import VistaMovimientos
 from vistas.propiedades import VistaPropiedades
@@ -58,6 +59,7 @@ def add_urls(app):
     api.add_resource(VistaMovimientos, "/propiedades/<int:id_propiedad>/movimientos")
     api.add_resource(VistaMovimiento, "/movimientos/<int:id_movimiento>")
     api.add_resource(VistaBancos, "/bancos")
+    api.add_resource(VistaZonasPosibles, "/zonas-posibles")
     api.add_resource(VistaTipoMovimientos, "/tipo-movimientos")
     api.add_resource(VistaZonasPropiedad, "/propiedades/<int:id_propiedad>/zonas")
     api.add_resource(VistaElementosInventario, "/zonas/<int:id_zona>/elementos")
