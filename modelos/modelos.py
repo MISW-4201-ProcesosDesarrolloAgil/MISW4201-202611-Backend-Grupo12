@@ -55,6 +55,27 @@ class Banco(enum.Enum):
     RAPPIPAY                        = 'RAPPIPAY'
     NEQUI                           = 'NEQUI'
 
+#enumerar zonas posibles
+
+class ZonaPosible(enum.Enum):
+    ENTRADA_PRINCIPAL = "ENTRADA_PRINCIPAL"
+    SALA = "SALA"
+    COMEDOR = "COMEDOR"
+    COCINA = "COCINA"
+    HABITACION_PRINCIPAL = "HABITACION_PRINCIPAL"
+    HABITACION_SECUNDARIA = "HABITACION_SECUNDARIA"
+    BANO_PRINCIPAL = "BANO_PRINCIPAL"
+    BANO_SECUNDARIO = "BANO_SECUNDARIO"
+    BALCON = "BALCON"
+    TERRAZA = "TERRAZA"
+    PATIO = "PATIO"
+    JARDIN = "JARDIN"
+    LAVANDERIA = "LAVANDERIA"
+    ESTUDIO = "ESTUDIO"
+    PARQUEADERO = "PARQUEADERO"
+    BODEGA = "BODEGA"
+    PASILLO = "PASILLO"
+    ESCALERAS = "ESCALERAS"
 
 class Propiedad(db.Model):
     __table_args__ = (UniqueConstraint('direccion', 'ciudad', 'municipio', name='unique_address'),)
@@ -70,6 +91,7 @@ class Propiedad(db.Model):
     numero_cuenta = db.Column(db.String(32), nullable=True)
     movimientos = db.relationship('Movimiento', cascade='all, delete, delete-orphan')
     reservas = db.relationship('Reserva', cascade='all, delete, delete-orphan')
+    zonas = db.relationship('Zona', back_populates='propiedad', cascade='all, delete, delete-orphan')
     id_usuario = db.Column(db.Integer, db.ForeignKey("usuario.id"), nullable=False)
 
 
@@ -108,6 +130,23 @@ class Usuario(db.Model):
     propiedades = db.relationship('Propiedad', cascade='all, delete, delete-orphan')
 
 
+class Zona(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nombre_zona = db.Column(db.Enum(ZonaPosible), nullable=False)
+    descripcion = db.Column(db.String(256), nullable=True)
+    id_propiedad = db.Column(db.Integer, db.ForeignKey('propiedad.id'))
+    propiedad = db.relationship('Propiedad', back_populates='zonas')
+    elementos = db.relationship('ElementoInventario', back_populates='zona', cascade='all, delete, delete-orphan')
+
+class ElementoInventario(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nombre_elemento = db.Column(db.String(128), nullable=False)
+    descripcion = db.Column(db.String(256), nullable=True)
+    cantidad = db.Column(db.Integer, nullable=False, default=0)
+    fecha_registro = db.Column(db.DateTime, nullable=True)
+    id_zona = db.Column(db.Integer, db.ForeignKey('zona.id'))
+    zona = db.relationship('Zona', back_populates='elementos')
+
 class ReservaSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Reserva
@@ -141,3 +180,18 @@ class UsuarioSchema(SQLAlchemyAutoSchema):
         include_relationships = True
         load_instance = True
         exclude = ('contrasena',)
+
+class ZonaSchema(SQLAlchemyAutoSchema):
+    nombre_zona = fields.Enum(ZonaPosible, by_value=True)
+    class Meta:
+        model = Zona
+        include_relationships = True
+        load_instance = True
+        include_fk = True
+
+class ElementoInventarioSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = ElementoInventario
+        include_relationships = True
+        load_instance = True
+        include_fk = True
