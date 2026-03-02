@@ -10,11 +10,17 @@ zona_schema = ZonaSchema()
 
 class VistaZonasPropiedad(Resource):
 
-    @jwt_required()
-    def post(self, id_propiedad):
+    def _validar_propiedad_existe(self, id_propiedad):
         resultado_buscar_propiedad = buscar_propiedad(id_propiedad, current_user.id)
         if resultado_buscar_propiedad.error:
             return resultado_buscar_propiedad.error
+        return None
+
+    @jwt_required()
+    def post(self, id_propiedad):
+        error = self._validar_propiedad_existe(id_propiedad)
+        if error:
+            return error
         try:
             zona = zona_schema.load(request.json, session=db.session)
             zona.id_propiedad = id_propiedad
@@ -29,8 +35,8 @@ class VistaZonasPropiedad(Resource):
     
     @jwt_required()
     def get(self, id_propiedad):
-        resultado_buscar_propiedad = buscar_propiedad(id_propiedad, current_user.id)
-        if resultado_buscar_propiedad.error:
-            return resultado_buscar_propiedad.error
+        error = self._validar_propiedad_existe(id_propiedad)
+        if error:
+            return error
         zonas = Zona.query.filter_by(id_propiedad=id_propiedad).all()
         return zona_schema.dump(zonas, many=True), 200
