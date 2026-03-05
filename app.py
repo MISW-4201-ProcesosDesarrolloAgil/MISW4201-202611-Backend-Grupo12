@@ -6,6 +6,8 @@ from sqlalchemy import select
 from vistas.bancos import VistaBancos
 from vistas.movimiento import VistaMovimiento
 from vistas.movimientos import VistaMovimientos
+from vistas.ingresos import VistaIngresos
+from vistas.egresos import VistaEgresos
 from vistas.propiedades import VistaPropiedades
 from vistas.propiedad import VistaPropiedad
 from vistas.reserva import VistaReserva
@@ -57,6 +59,8 @@ def add_urls(app):
     api.add_resource(VistaReserva, "/reservas/<int:id_reserva>")
     api.add_resource(VistaMovimientos, "/propiedades/<int:id_propiedad>/movimientos")
     api.add_resource(VistaMovimiento, "/movimientos/<int:id_movimiento>")
+    api.add_resource(VistaIngresos, "/propiedades/<int:id_propiedad>/ingresos")
+    api.add_resource(VistaEgresos, "/propiedades/<int:id_propiedad>/egresos")
     api.add_resource(VistaBancos, "/bancos")
     api.add_resource(VistaTipoMovimientos, "/tipo-movimientos")
 
